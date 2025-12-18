@@ -63,10 +63,33 @@
         <div class="menu-layer-bottom">
             <div class="bois"><img src="assets/background/FondEnBois.png" alt="Bois"></div>
             <div class="calendrier">
-                <img src="./assets/utils/jour1flat.png" alt="1">
-                <img src="./assets/utils/jour2flat.png" alt="2">
-                <img src="./assets/utils/jour3flat.png" alt="3">
-                <img src="./assets/utils/jour4flat.png" alt="4">
+                <div class="day active-day" data-day="1">
+                    <img class="day-img" src="./assets/utils/jour1flat.png" alt="1">
+                </div>
+                <div class="day" data-day="2">
+                    <img class="day-img" src="./assets/utils/jour2flat.png" alt="2">
+                    <img src="./assets/utils/cadenas.png" alt="cadenas" class="lock-icon">
+                </div>
+                <div class="day" data-day="3">
+                    <img class="day-img" src="./assets/utils/jour3flat.png" alt="3">
+                    <img src="./assets/utils/cadenas.png" alt="cadenas" class="lock-icon">
+                </div>
+                <div class="day" data-day="4">
+                    <img class="day-img" src="./assets/utils/jour4flat.png" alt="4">
+                    <img src="./assets/utils/cadenas.png" alt="cadenas" class="lock-icon">
+                </div>
+                <div class="day" data-day="5">
+                    <img class="day-img" src="./assets/utils/jour5flat.png" alt="5">
+                    <img src="./assets/utils/cadenas.png" alt="cadenas" class="lock-icon">
+                </div>
+                <div class="day" data-day="6">
+                    <img class="day-img" src="./assets/utils/jour6flat.png" alt="6">
+                    <img src="./assets/utils/cadenas.png" alt="cadenas" class="lock-icon">
+                </div>
+                <div class="day" data-day="7">
+                    <img class="day-img" src="./assets/utils/jour7flat.png" alt="7">
+                    <img src="./assets/utils/cadenas.png" alt="cadenas" class="lock-icon">
+                </div>
             </div>
         </div>
 
@@ -78,6 +101,24 @@
                 Récupérer le présent
                 <img class="cadeauIcon" src="./assets/utils/cadeauIcon.png" alt="icone cadeau">
             </div>
+        </div>
+
+        <div id="cleaning-layer" class="hidden">
+            <div class="cleaning-area">
+                <p class="cleaning-instructions" id="cleaning-hint">Frotte l'assiette avec ton chiffon</p>
+                <div class="dish-frame">
+                    <img src="assets/utils/AssietteSale.png" id="dish-dirty" class="dish-img" alt="Assiette sale">
+                    <img src="assets/utils/AssiettePropre.png" id="dish-clean" class="dish-img hidden"
+                        alt="Assiette propre">
+                </div>
+                <div class="cleaning-progress">
+                    <div class="cleaning-progress-bar" id="cleaning-progress-bar"></div>
+                </div>
+                <div id="cleaning-message" class="cleaning-message hidden">Vous avez effectué votre tâche avec succès
+                </div>
+                <button id="finish-btn" class="action-btn hidden">TERMINER</button>
+            </div>
+            <img src="assets/utils/Chiffon2.png" id="custom-cursor" alt="Chiffon">
         </div>
 
         <div id="magic-layer" class="hidden">
@@ -104,7 +145,9 @@
             <div class="dialogue-box style-yubaba" id="dialogue-box">
                 <div class="name-tag" id="name-tag">YUBABA</div>
                 <p class="text-content" id="text-content"></p>
-                <div class="next-indicator" id="next-btn">▼</div>
+                <div class="next-indicator" id="next-btn">
+                    <img src="./assets/utils/fleche.png" alt="fleche" class="nextArrow">
+                </div>
             </div>
         </div>
 

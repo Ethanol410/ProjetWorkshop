@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const sceneIntroLayer = document.getElementById("scene-intro-layer");
   const enterBtn = document.getElementById("enter-btn");
   const endLayer = document.getElementById("end-layer");
+  const endBtn = document.getElementById("end-btn");
+
+  const backgroundLayer = document.getElementById("background-layer");
 
   const introLayer = document.getElementById("intro-layer"); // Porte
   const uiLayer = document.getElementById("ui-layer");
@@ -16,16 +19,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const ctx = signatureCanvas.getContext("2d");
   const penCursor = document.getElementById("pen-cursor");
   const itemLayer = document.getElementById("item-layer");
+  const itemName = itemLayer.querySelector(".nomObjet");
+  const itemDesc = itemLayer.querySelector(".explicationObjet");
+  const itemHint = itemLayer.querySelector(".item-hint");
+  const itemImg = document.getElementById("item-img");
 
   const dialogueBox = document.getElementById("dialogue-box");
   const nameTag = document.getElementById("name-tag");
   const textContent = document.getElementById("text-content");
   const nextBtn = document.getElementById("next-btn");
 
+  const cleaningLayer = document.getElementById("cleaning-layer");
+  const dishDirty = document.getElementById("dish-dirty");
+  const dishClean = document.getElementById("dish-clean");
+  const cleaningMessage = document.getElementById("cleaning-message");
+  const finishBtn = document.getElementById("finish-btn");
+  const cleaningHint = document.getElementById("cleaning-hint");
+  const cleanCursor = document.getElementById("custom-cursor");
+  const cleaningProgressBar = document.getElementById("cleaning-progress-bar");
+
   // --- ASSETS CONFIG ---
   const imgYubaba = "assets/utils/yubaba.png";
   const imgYubabaReading = "assets/utils/yubabaReading.png";
-  const imgZeniba = "assets/utils/yubaba.png"; // Assure-toi d'avoir zeniba.png !
+  const imgZeniba = "assets/utils/yubaba.png";
 
   const gifMagicSteal = "assets/gif/debutContrat.gif";
   const gifMagicEnd = "assets/gif/finContrat.gif";
@@ -34,6 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentStep = -1; // -1 = Chargement
   let isTyping = false;
   let isSigning = false;
+
+  let isDay4 = false;
+  let day4Step = -1;
+  let cleaningProgress = 0;
+  let cleaningActive = false;
 
   // =========================================================
   // 1. PRELOADER (CHARGEMENT)
@@ -48,6 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
     gifMagicEnd,
     imgYubaba,
     imgZeniba,
+    "assets/utils/Chiffon2.png",
+    "assets/utils/AssietteSale.png",
+    "assets/utils/AssiettePropre.png",
   ];
 
   let assetsLoaded = 0;
@@ -78,6 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadingLayer.classList.add("hidden");
     // Afficher la scène de pluie
     sceneIntroLayer.classList.remove("hidden");
+    // Initialiser le calendrier pour le jour 1
+    setDayIndicator(1);
     // Audio pluie si tu en as un, sinon rien
   }
 
@@ -85,6 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
   enterBtn.addEventListener("click", () => {
     sceneIntroLayer.classList.add("hidden");
     nextStep(); // Lance l'étape 1 (Porte)
+  });
+
+  endBtn.addEventListener("click", () => {
+    startDay4();
   });
 
   // =========================================================
@@ -96,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function nextStep() {
     if (isTyping) return;
     currentStep++;
-    console.log("Étape : " + currentStep);
+    console.log("Jour 1, Étape : " + currentStep);
 
     switch (currentStep) {
       case 0: // Porte s'ouvre
@@ -176,6 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Modifiez cette partie vers la ligne 130 de script.js
 
   nextBtn.addEventListener("click", () => {
+    if (isDay4) {
+      if (day4Step === 2) return; // Attente récupération chiffon
+      if (day4Step === 4) return; // Nettoyage en cours
+      if (day4Step >= 5) return; // Fin journée 4
+      nextStepDay4();
+      return;
+    }
+
     // Bloque le bouton lors des actions spéciales
     if (currentStep === 3) return; // Pinceau
     if (currentStep === 5) return; // Signature
@@ -201,19 +239,30 @@ document.addEventListener("DOMContentLoaded", () => {
     uiLayer.classList.remove("hidden");
   }
 
-  function offerPen() {
-    uiLayer.classList.add("hidden"); // On cache le dialogue
-    characterImg.style.opacity = "0"; // On cache Yubaba
-    itemLayer.classList.remove("hidden"); // On affiche le pinceau
+  function showItem(name, desc, imgSrc, onCollected) {
+    itemName.textContent = name;
+    itemDesc.textContent = desc;
+    itemImg.src = imgSrc;
 
-    // Clic sur "Récupérer le présent" (le bouton dans l'item-layer)
-    const btnRecup = itemLayer.querySelector(".item-hint"); // Assure toi que c'est bien la classe du bouton
-    btnRecup.onclick = () => {
+    uiLayer.classList.add("hidden");
+    characterImg.style.opacity = "0";
+    itemLayer.classList.remove("hidden");
+
+    itemHint.onclick = () => {
       itemLayer.classList.add("hidden");
       uiLayer.classList.remove("hidden");
       characterImg.style.opacity = "1";
-      nextStep(); // Retour à Yubaba "Signe ici"
+      if (typeof onCollected === "function") onCollected();
     };
+  }
+
+  function offerPen() {
+    showItem(
+      "Pinceau",
+      "Un vulgaire pinceau servant à écrire toute sorte de choses...",
+      "assets/utils/Pinceau2.png",
+      () => nextStep()
+    );
   }
 
   function showContract() {
@@ -283,6 +332,212 @@ document.addEventListener("DOMContentLoaded", () => {
     endLayer.classList.remove("hidden");
     // Boucle infinie, pas de nextStep
   }
+
+  // =========================================================
+  // JOUR 4 : SÉQUENCE ASSIETTES
+  // =========================================================
+
+  function setDayIndicator(dayNumber) {
+    const topDayImg = document.querySelector(
+      ".menu-layer-top .calendrier img:last-child"
+    );
+    const bottomCalendar = document.querySelector(
+      ".menu-layer-bottom .calendrier"
+    );
+    const bottomDays = Array.from(
+      document.querySelectorAll(".menu-layer-bottom .day")
+    );
+
+    if (topDayImg) topDayImg.src = `assets/utils/Jour${dayNumber}.png`;
+
+    // Apply centered layout for days > 1
+    if (bottomCalendar) {
+      if (dayNumber > 1) {
+        bottomCalendar.classList.add("centered-layout");
+      } else {
+        bottomCalendar.classList.remove("centered-layout");
+      }
+    }
+
+    bottomDays.forEach((day) => {
+      day.classList.remove("active-day", "locked-next", "locked", "past-day");
+      const img = day.querySelector(".day-img");
+      if (img) img.style.opacity = "0.6";
+      day.style.order = 0;
+    });
+
+    bottomDays.forEach((day) => {
+      const num = Number(day.dataset.day);
+      if (Number.isNaN(num)) return;
+
+      // Masquer les jours 5+ si on est avant le jour 4
+      if (num >= 5 && dayNumber < 4) {
+        day.style.display = "none";
+        return;
+      } else {
+        day.style.display = "flex";
+      }
+
+      if (num === dayNumber) {
+        day.classList.add("active-day");
+        const img = day.querySelector(".day-img");
+        if (img) img.style.opacity = "1";
+        day.style.order = 100; // Centre (ordre élevé pour être après les passés)
+      } else if (num < dayNumber) {
+        day.classList.add("past-day");
+        day.style.order = num; // Ordre naturel 1, 2, 3... -> à gauche
+      } else {
+        day.classList.add("locked-next");
+        day.style.order = num + 100; // Ordre élevé -> à droite
+      }
+    });
+  }
+
+  function startDay4() {
+    isDay4 = true;
+    day4Step = -1;
+    endLayer.classList.add("hidden");
+    uiLayer.classList.remove("hidden");
+    backgroundLayer.style.backgroundImage =
+      "url('assets/background/bureauYubaba.jpg')";
+    setDayIndicator(4);
+    nextStepDay4();
+  }
+
+  function nextStepDay4() {
+    if (isTyping) return;
+    day4Step++;
+    console.log("Jour 4, Étape : " + day4Step);
+
+    switch (day4Step) {
+      case 0:
+        showUi();
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter(
+          "Bienvenue à nouveau ! Prêt à accomplir ta tâche du jour ? Aujourd'hui, je veux voir les assiettes briller !",
+          "typing-sound"
+        );
+        break;
+      case 1:
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter(
+          "Voici ton cadeau ! Allez, un peu de nerf : les clients attendent !",
+          "typing-sound"
+        );
+        break;
+      case 2:
+        offerCloth();
+        break;
+      case 3:
+        setSpeaker("ZENIBA", "style-zeniba", imgZeniba, "right");
+        typeWriter(
+          "Prends ton temps. Le Sans-Visage attendra. Rien ne sert de se précipiter.",
+          "brush-sound"
+        );
+        break;
+      case 4:
+        startCleaningTask();
+        break;
+      case 5:
+        cleaningLayer.classList.add("hidden");
+        uiLayer.classList.remove("hidden");
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter(
+          "Tu as terminé ta journée, reviens demain j’ai des trucs à te donner...",
+          "typing-sound",
+          () => setTimeout(playEndScene, 400)
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  function offerCloth() {
+    showItem(
+      "Chiffon",
+      "Un chiffon bien propre pour faire briller les assiettes.",
+      "assets/utils/Chiffon2.png",
+      () => nextStepDay4()
+    );
+  }
+
+  function startCleaningTask() {
+    cleaningProgress = 0;
+    cleaningActive = false;
+    uiLayer.classList.add("hidden");
+    cleaningLayer.classList.remove("hidden");
+    dishDirty.classList.remove("hidden");
+    dishClean.classList.add("hidden");
+    cleaningMessage.classList.add("hidden");
+    finishBtn.classList.add("hidden");
+    if (cleaningHint) cleaningHint.classList.remove("hidden");
+    updateCleaningBar(0);
+  }
+
+  function startScrub(e) {
+    cleaningActive = true;
+    moveCursor(e);
+    const audio = document.getElementById("brush-sound");
+    if (audio) {
+      audio.currentTime = 0;
+      audio.volume = 0.35;
+      audio.play().catch(() => {});
+    }
+  }
+
+  function stopScrub() {
+    cleaningActive = false;
+    cleanCursor.style.display = "none";
+    const audio = document.getElementById("brush-sound");
+    if (audio) audio.pause();
+  }
+
+  function moveCursor(e) {
+    if (!cleanCursor) return;
+    cleanCursor.style.display = "block";
+    cleanCursor.style.left = `${e.clientX}px`;
+    cleanCursor.style.top = `${e.clientY}px`;
+  }
+
+  function handleScrub(e) {
+    if (!cleaningActive) return;
+    moveCursor(e);
+    cleaningProgress++;
+    updateCleaningBar(cleaningProgress);
+    if (cleaningProgress > 120) revealCleanDish();
+  }
+
+  function revealCleanDish() {
+    cleaningActive = false;
+    dishDirty.classList.add("hidden");
+    dishClean.classList.remove("hidden");
+    cleaningMessage.classList.remove("hidden");
+    finishBtn.classList.remove("hidden");
+    if (cleaningHint) cleaningHint.classList.add("hidden");
+    updateCleaningBar(120);
+    stopScrub();
+  }
+
+  function updateCleaningBar(value) {
+    if (!cleaningProgressBar) return;
+    const target = 120;
+    const pct = Math.min(value / target, 1) * 100;
+    cleaningProgressBar.style.width = `${pct}%`;
+  }
+
+  if (cleaningLayer) {
+    cleaningLayer.addEventListener("pointerdown", (e) => {
+      startScrub(e);
+    });
+    cleaningLayer.addEventListener("pointermove", (e) => {
+      if (cleaningActive) e.preventDefault();
+      handleScrub(e);
+    });
+    cleaningLayer.addEventListener("pointerleave", stopScrub);
+  }
+  window.addEventListener("pointerup", stopScrub);
+  if (finishBtn) finishBtn.addEventListener("click", () => nextStepDay4());
 
   // =========================================================
   // 4. SIGNATURE (CANVAS) - VERSION CORRIGÉE
@@ -399,7 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
     else nameTagElement.classList.remove("name-tag-right");
   }
 
-  function typeWriter(text, soundId) {
+  function typeWriter(text, soundId, onDone) {
     isTyping = true;
     textContent.innerHTML = "";
     let i = 0;
@@ -418,6 +673,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         isTyping = false;
         if (audio) audio.pause();
+        if (typeof onDone === "function") onDone();
       }
     }
     type();
