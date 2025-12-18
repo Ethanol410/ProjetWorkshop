@@ -205,7 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Modifiez cette partie vers la ligne 130 de script.js
 
-  nextBtn.addEventListener("click", () => {
+  // Fonction pour gérer le passage au dialogue suivant
+  function handleNextDialogue() {
     if (isDay4) {
       if (day4Step === 2) return; // Attente récupération chiffon
       if (day4Step === 4) return; // Nettoyage en cours
@@ -221,6 +222,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentStep === 14) return; // Fin
 
     nextStep();
+  }
+
+  // Clic sur la flèche
+  nextBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // Empêche la propagation pour éviter de déclencher deux fois
+    handleNextDialogue();
+  });
+
+  // Clic n'importe où sur la boîte de dialogue
+  dialogueBox.addEventListener("click", () => {
+    handleNextDialogue();
   });
 
   // =========================================================
