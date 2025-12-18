@@ -42,9 +42,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const imgYubaba = "assets/utils/yubaba.png";
   const imgYubabaReading = "assets/utils/yubabaReading.png";
   const imgZeniba = "assets/utils/yubaba.png";
+  const imgKamaji = "assets/utils/kamaji.png"; // À remplacer si tu as l'image de Kamaji
 
   const gifMagicSteal = "assets/gif/debutContrat.gif";
   const gifMagicEnd = "assets/gif/finContrat.gif";
+  const gifFondTrain = "assets/gif/fondTrain.gif";
+
+  const imgContract1 = "assets/utils/contratEcrit.png";
+  const imgContract2 = "assets/utils/contratCasse.png";
+  const imgContract3 = "assets/utils/contractCasseRelie.png";
+  const imgContract4 = "assets/utils/contratDetruit.png"; // Contrat complètement cassé
 
   // --- ETAT DU JEU ---
   let currentStep = -1; // -1 = Chargement
@@ -57,6 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let cleaningActive = false;
   let lastCleaningX = 0;
   let lastCleaningY = 0;
+
+  let isDay24 = false;
+  let day24Step = -1;
+  let contractBreakProgress = 0;
 
   // =========================================================
   // 1. PRELOADER (CHARGEMENT)
@@ -116,7 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   endBtn.addEventListener("click", () => {
-    startDay4();
+    if (!isDay4) {
+      startDay4();
+    } else {
+      startDay24();
+    }
   });
 
   // =========================================================
@@ -209,6 +224,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fonction pour gérer le passage au dialogue suivant
   function handleNextDialogue() {
+    if (isDay24) {
+      if (day24Step === 2) return; // Attente récupération ticket
+      if (day24Step === 4) return; // Contrat en cours de destruction
+      if (day24Step >= 7) return; // Fin
+      nextStepDay24();
+      return;
+    }
+
     if (isDay4) {
       if (day4Step === 2) return; // Attente récupération chiffon
       if (day4Step === 4) return; // Nettoyage en cours
@@ -364,12 +387,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (topDayImg) topDayImg.src = `assets/utils/Jour${dayNumber}.png`;
 
-    // Apply centered layout for days > 1
+    // Apply centered layout for days > 1, start layout for day 24
     if (bottomCalendar) {
-      if (dayNumber > 1) {
+      bottomCalendar.classList.remove("centered-layout", "start-layout");
+      if (dayNumber === 24) {
+        bottomCalendar.classList.add("start-layout");
+      } else if (dayNumber > 1) {
         bottomCalendar.classList.add("centered-layout");
-      } else {
-        bottomCalendar.classList.remove("centered-layout");
       }
     }
 
@@ -384,8 +408,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const num = Number(day.dataset.day);
       if (Number.isNaN(num)) return;
 
+      // Au jour 24, afficher uniquement les jours 21-24
+      if (dayNumber === 24) {
+        if (num >= 21 && num <= 24) {
+          day.style.display = "flex";
+        } else {
+          day.style.display = "none";
+          return;
+        }
+      }
       // Masquer les jours 5+ si on est avant le jour 4
-      if (num >= 5 && dayNumber < 4) {
+      else if (num >= 5 && dayNumber < 4) {
+        day.style.display = "none";
+        return;
+      }
+      // Masquer les jours 8+ si on est entre le jour 4 et 23
+      else if (num >= 8) {
         day.style.display = "none";
         return;
       } else {
@@ -413,7 +451,7 @@ document.addEventListener("DOMContentLoaded", () => {
     endLayer.classList.add("hidden");
     uiLayer.classList.remove("hidden");
     backgroundLayer.style.backgroundImage =
-      "url('assets/background/bureauYubaba.jpg')";
+      "url('./assets/background/fondHallMenage.png')";
     setDayIndicator(4);
     nextStepDay4();
   }
@@ -569,6 +607,267 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.addEventListener("pointerup", stopScrub);
   if (finishBtn) finishBtn.addEventListener("click", () => nextStepDay4());
+
+  // =========================================================
+  // JOUR 24 : FINAL
+  // =========================================================
+
+  function startDay24() {
+    isDay24 = true;
+    isDay4 = false;
+    day24Step = -1;
+    endLayer.classList.add("hidden");
+    uiLayer.classList.remove("hidden");
+    backgroundLayer.style.backgroundImage =
+      "url('./assets/background/fondHallMenage.png')";
+    setDayIndicator(24);
+    nextStepDay24();
+  }
+
+  function nextStepDay24() {
+    if (isTyping) return;
+    day24Step++;
+    console.log("Jour 24, Étape : " + day24Step);
+
+    switch (day24Step) {
+      case 0:
+        // Yubaba alerte
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter("ALERTE SÉCURITÉ !  EMPLOYÉ MANQUANT !!!", "typing-sound");
+        break;
+
+      case 1:
+        // Kamaji apparaît
+        backgroundLayer.style.backgroundImage =
+          "url('./assets/background/fondKamaji.png')";
+        characterImg.style.opacity = "0";
+        setTimeout(() => {
+          characterImg.src = imgKamaji;
+          characterLayer.classList.add("position-right");
+          characterLayer.classList.remove("position-left");
+          characterImg.style.opacity = "1";
+          setSpeaker("KAMAJI", "style-zeniba", imgKamaji, "right");
+          typeWriter(
+            "Personne ne mérite d'être traité de cette manière. Tenez ! Et partez vite !",
+            "typing-sound"
+          );
+        }, 500);
+        break;
+
+      case 2:
+        // Offrir le ticket de train
+        offerTrainTicket();
+        break;
+
+      case 3:
+        // Yubaba revient en colère
+        backgroundLayer.style.backgroundImage =
+          "url('./assets/background/fondHallMenage.png')";
+        characterImg.style.opacity = "0";
+        setTimeout(() => {
+          characterImg.src = imgYubaba;
+          characterLayer.classList.add("position-left");
+          characterLayer.classList.remove("position-right");
+          characterImg.style.opacity = "1";
+          setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+          typeWriter(
+            "Reviens ! Tu as signé un contrat ! Je vais te transformer en...",
+            "typing-sound"
+          );
+        }, 500);
+        break;
+
+      case 4:
+        // Montrer le contrat à briser
+        showBreakableContract();
+        break;
+
+      case 5:
+        // Yubaba défaite
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter("Nonnnnnnn !!!", "typing-sound");
+        break;
+
+      case 6:
+        // Zeniba apparaît
+        characterImg.style.opacity = "0";
+        setTimeout(() => {
+          characterImg.src = imgZeniba;
+          characterLayer.classList.add("position-right");
+          characterLayer.classList.remove("position-left");
+          characterImg.style.opacity = "1";
+          setSpeaker("ZENIBA", "style-zeniba", imgZeniba, "right");
+          typeWriter("Ton nom est à toi. Bon voyage.", "typing-sound");
+        }, 500);
+        break;
+
+      case 7:
+        // Scène finale avec le train
+        playFinalScene();
+        break;
+
+      default:
+        console.log("Fin du Jour 24");
+    }
+  }
+
+  function offerTrainTicket() {
+    showItem(
+      "Ticket de Train",
+      "Un précieux ticket pour voyager vers la liberté.",
+      "assets/utils/ticketDeTrain2.png",
+      () => nextStepDay24()
+    );
+  }
+
+  function showBreakableContract() {
+    uiLayer.classList.add("hidden");
+    characterLayer.style.opacity = "0";
+    contractBreakProgress = 0;
+
+    // Créer un layer pour le contrat cassable s'il n'existe pas
+    let breakableContractLayer = document.getElementById(
+      "breakable-contract-layer"
+    );
+    if (!breakableContractLayer) {
+      breakableContractLayer = document.createElement("div");
+      breakableContractLayer.id = "breakable-contract-layer";
+      breakableContractLayer.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 85;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      `;
+      document
+        .getElementById("game-container")
+        .appendChild(breakableContractLayer);
+    }
+
+    const contractImg = document.createElement("img");
+    contractImg.id = "breakable-contract-img";
+    contractImg.src = imgContract1;
+    contractImg.style.cssText = `
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      transition: transform 0.1s;
+    `;
+
+    const hint = document.createElement("p");
+    hint.textContent = "Clique pour briser le contrat !";
+    hint.style.cssText = `
+      color: #fff;
+      font-family: 'Courier Prime', monospace;
+      font-size: 24px;
+      margin-top: 20px;
+      text-shadow: 2px 2px 4px #000;
+      animation: pulse 2s infinite;
+    `;
+
+    breakableContractLayer.innerHTML = "";
+    breakableContractLayer.appendChild(contractImg);
+    breakableContractLayer.appendChild(hint);
+    breakableContractLayer.classList.remove("hidden");
+
+    breakableContractLayer.onclick = () => {
+      contractBreakProgress++;
+
+      // Animation de shake
+      contractImg.style.transform = `rotate(${
+        Math.random() * 10 - 5
+      }deg) scale(${0.95 + Math.random() * 0.1})`;
+      setTimeout(() => {
+        contractImg.style.transform = "rotate(0deg) scale(1)";
+      }, 100);
+
+      // Changer l'image selon la progression
+      if (contractBreakProgress >= 3 && contractBreakProgress < 6) {
+        contractImg.src = imgContract2;
+      } else if (contractBreakProgress >= 6 && contractBreakProgress < 9) {
+        contractImg.src = imgContract3;
+      } else if (contractBreakProgress >= 9) {
+        contractImg.src = imgContract4;
+        hint.textContent = "Le contrat est brisé !";
+
+        // Attendre 1 seconde puis continuer
+        setTimeout(() => {
+          breakableContractLayer.classList.add("hidden");
+          uiLayer.classList.remove("hidden");
+          characterLayer.style.opacity = "1";
+          nextStepDay24();
+        }, 1500);
+
+        // Désactiver les clics
+        breakableContractLayer.onclick = null;
+      }
+    };
+  }
+
+  function playFinalScene() {
+    uiLayer.classList.add("hidden");
+    characterLayer.style.opacity = "0";
+
+    // Créer un layer pour la scène finale
+    let finalSceneLayer = document.getElementById("final-scene-layer");
+    if (!finalSceneLayer) {
+      finalSceneLayer = document.createElement("div");
+      finalSceneLayer.id = "final-scene-layer";
+      finalSceneLayer.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 200;
+        background: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      `;
+      document.getElementById("game-container").appendChild(finalSceneLayer);
+    }
+
+    const finalGif = document.createElement("img");
+    finalGif.src = gifFondTrain;
+    finalGif.style.cssText = `
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    `;
+
+    finalSceneLayer.innerHTML = "";
+    finalSceneLayer.appendChild(finalGif);
+    finalSceneLayer.classList.remove("hidden");
+
+    // Message de fin après quelques secondes
+    setTimeout(() => {
+      const endMessage = document.createElement("div");
+      endMessage.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        font-family: 'Courier Prime', monospace;
+        font-size: 32px;
+        text-shadow: 2px 2px 8px black;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 40px;
+        border-radius: 15px;
+      `;
+      endMessage.innerHTML =
+        "Félicitations !<br>Vous avez terminé votre aventure.";
+      finalSceneLayer.appendChild(endMessage);
+    }, 3000);
+  }
 
   // =========================================================
   // 4. SIGNATURE (CANVAS) - VERSION CORRIGÉE

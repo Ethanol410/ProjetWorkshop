@@ -549,6 +549,11 @@ html {
     gap: 8px;
 }
 
+.menu-layer-bottom .calendrier.start-layout {
+    justify-content: start;
+    gap: 8px;
+}
+
 .menu-layer-bottom .day {
     position: relative;
     display: flex;
