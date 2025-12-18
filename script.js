@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =========================================================
-  // 4. SIGNATURE (CANVAS)
+  // 4. SIGNATURE (CANVAS) - VERSION CORRIGÉE
   // =========================================================
 
   function initSignatureCanvas() {
@@ -270,47 +270,74 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.strokeStyle = "#2f2f2f";
     ctx.lineWidth = 3;
     ctx.lineCap = "round";
+    ctx.lineJoin = "round"; // Rend les angles plus doux
+  }
+
+  // Nouvelle fonction utilitaire pour récupérer la bonne position
+  function getEventPos(e) {
+    e.preventDefault();
+    let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const rect = signatureCanvas.getBoundingClientRect();
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
   }
 
   function startSigning(e) {
-    if (currentStep !== 5) return;
+    if (currentStep !== 5) return; // CORRECTION : Etape 5 et pas 6
     isSigning = true;
     penCursor.style.display = "block";
-    draw(e);
+
+    // On commence le tracé proprement
+    const pos = getEventPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+
+    // On force un premier point
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+
+    updateCursor(pos.x, pos.y);
   }
 
   function stopSigning() {
+    if (!isSigning) return;
     isSigning = false;
     penCursor.style.display = "none";
-    ctx.beginPath();
+    ctx.beginPath(); // On ferme le chemin
     checkSignatureCompletion();
   }
 
   function draw(e) {
     if (!isSigning) return;
-    e.preventDefault();
 
-    let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const pos = getEventPos(e);
 
-    const rect = signatureCanvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
-    penCursor.style.left = x + rect.left + "px";
-    penCursor.style.top = y + rect.top + "px";
-
-    ctx.lineTo(x, y);
+    // Dessin
+    ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+
+    // Mise à jour du curseur
+    updateCursor(pos.x, pos.y);
 
     signaturePixels++;
   }
 
+  // Fonction pour placer le stylo au bon endroit
+  function updateCursor(x, y) {
+    // Le stylo est dans #contract-container, comme le canvas.
+    // Il faut ajouter la position "left/top" du canvas à la position x/y du dessin
+    penCursor.style.left = signatureCanvas.offsetLeft + x + "px";
+    penCursor.style.top = signatureCanvas.offsetTop + y + "px";
+  }
+
   let signaturePixels = 0;
   function checkSignatureCompletion() {
-    if (signaturePixels > 50) {
+    // On réduit un peu le seuil pour que ce soit plus facile sur mobile
+    if (signaturePixels > 30) {
       signaturePixels = 0;
       setTimeout(() => {
         nextStep();
@@ -320,11 +347,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Events Signature
   signatureCanvas.addEventListener("mousedown", startSigning);
-  signatureCanvas.addEventListener("touchstart", startSigning);
+  signatureCanvas.addEventListener("touchstart", startSigning, {
+    passive: false,
+  }); // passive: false est important pour preventDefault
   window.addEventListener("mouseup", stopSigning);
   window.addEventListener("touchend", stopSigning);
   signatureCanvas.addEventListener("mousemove", draw);
-  signatureCanvas.addEventListener("touchmove", draw);
+  signatureCanvas.addEventListener("touchmove", draw, { passive: false });
 
   // =========================================================
   // 5. UTILITAIRES
