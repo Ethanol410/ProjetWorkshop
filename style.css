@@ -78,9 +78,7 @@ html {
     z-index: 10;
 }
 
-.hidden {
-    display: none;
-}
+
 
 #bright-pattern {
     position: absolute;
@@ -150,8 +148,8 @@ html {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 10px;
     border: 2px solid #000;
-    padding: 20px;
-    padding-top: 30px;
+    padding: 5px 20px;
+    /* padding-top: 30px; */
     position: relative;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     min-height: 100px;
@@ -278,7 +276,7 @@ html {
 /* --- COUCHE CONTRAT --- */
 #contract-container {
     position: absolute;
-    top: 32%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
@@ -358,13 +356,14 @@ html {
 
 .explicationObjet {
     color: #000;
-    font-family: 'Amatic SC', cursive;
-    font-size: 20px;
+    font-size: 25px;
     margin-top: 15px;
     padding: 10px;
     text-align: center;
     background-color: #E1CFAB;
     border-radius: 13px;
+    width: 60%;
+    outline: 3px solid #fff;
 }
 
 .nomObjet {
@@ -379,15 +378,16 @@ html {
 }
 
 .item-hint {
-    color: 000000;
+    color: #000000;
     /* font-family: 'Amatic SC', cursive; */
     font-size: 24px;
     margin-top: 20px;
     padding: 20px 15px;
     opacity: 1;
-    background-color: ;
+    background-color: #F7EEDF;
     animation: pulse 2s infinite;
     border-radius: 9px;
+    border: 2px solid #000;
 }
 
 @keyframes floatItem {
@@ -530,4 +530,83 @@ html {
 
 .menu-layer-bottom .calendrier img:hover {
     transform: scale(1.1);
+}
+
+/* ... (Garde tout ton CSS précédent) ... */
+
+/* --- ECRAN DE CHARGEMENT --- */
+#loading-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    /* Toujours au dessus */
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#loading-layer img {
+    width: 150px;
+    height: auto;
+}
+
+#loading-layer p {
+    font-family: 'Courier Prime', monospace;
+    margin-top: 20px;
+    color: #333;
+}
+
+/* --- SCENE INTRO & FIN (Plein écran) --- */
+#scene-intro-layer,
+#end-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* z-index: 200; */
+    background: black;
+}
+
+.full-screen-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Texte par dessus l'intro */
+.intro-overlay {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+}
+
+.intro-text {
+    font-family: 'Amatic SC', cursive;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.action-btn {
+    background-color: #D10000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    animation: pulse 2s infinite;
 }

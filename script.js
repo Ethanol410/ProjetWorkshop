@@ -1,17 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- ÉLÉMENTS DOM ---
-  const introLayer = document.getElementById("intro-layer");
+  const loadingLayer = document.getElementById("loading-layer");
+  const sceneIntroLayer = document.getElementById("scene-intro-layer");
+  const enterBtn = document.getElementById("enter-btn");
+  const endLayer = document.getElementById("end-layer");
+
+  const introLayer = document.getElementById("intro-layer"); // Porte
   const uiLayer = document.getElementById("ui-layer");
   const characterImg = document.getElementById("character-img");
-  const characterLayer = document.getElementById("character-layer"); // Pour le cacher
+  const characterLayer = document.getElementById("character-layer");
   const magicLayer = document.getElementById("magic-layer");
   const magicGif = document.getElementById("magic-gif");
   const contractContainer = document.getElementById("contract-container");
   const signatureCanvas = document.getElementById("signature-canvas");
   const ctx = signatureCanvas.getContext("2d");
   const penCursor = document.getElementById("pen-cursor");
-
-  // NOUVEAU LAYER ITEM
   const itemLayer = document.getElementById("item-layer");
 
   const dialogueBox = document.getElementById("dialogue-box");
@@ -19,25 +22,73 @@ document.addEventListener("DOMContentLoaded", () => {
   const textContent = document.getElementById("text-content");
   const nextBtn = document.getElementById("next-btn");
 
-  // --- SONS ---
-  const audioTyping = document.getElementById("typing-sound");
-  const audioBrush = document.getElementById("brush-sound");
-
-  // --- ETAT DU JEU ---
-  let currentStep = 0;
-  let isTyping = false;
-  let isSigning = false;
-
-  // --- ASSETS ---
+  // --- ASSETS CONFIG ---
   const imgYubaba = "assets/utils/yubaba.png";
   const imgYubabaReading = "assets/utils/yubabaReading.png";
-  const imgZeniba = "assets/utils/yubaba.png"; // Assure-toi d'avoir cette image ou remets yubaba si pas dispo
+  const imgZeniba = "assets/utils/yubaba.png"; // Assure-toi d'avoir zeniba.png !
 
   const gifMagicSteal = "assets/gif/debutContrat.gif";
   const gifMagicEnd = "assets/gif/finContrat.gif";
 
+  // --- ETAT DU JEU ---
+  let currentStep = -1; // -1 = Chargement
+  let isTyping = false;
+  let isSigning = false;
+
   // =========================================================
-  // 1. MOTEUR DE SCÉNARIO
+  // 1. PRELOADER (CHARGEMENT)
+  // =========================================================
+  // Liste des images clés à charger avant de lancer
+  const assetsToLoad = [
+    "assets/gif/sceneIntro.gif",
+    "assets/gif/ouverturePorte.gif",
+    "assets/background/bureauYubaba.jpg",
+    "assets/utils/",
+    gifMagicSteal,
+    gifMagicEnd,
+    imgYubaba,
+    imgZeniba,
+  ];
+
+  let assetsLoaded = 0;
+
+  // Fonction simple pour précharger
+  function preloadAssets() {
+    assetsToLoad.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        assetsLoaded++;
+        if (assetsLoaded === assetsToLoad.length) {
+          // Tout est chargé, on lance l'intro après un petit délai
+          setTimeout(startIntroScene, 1500);
+        }
+      };
+      img.onerror = () => {
+        // Même si erreur, on continue pour pas bloquer
+        assetsLoaded++;
+        if (assetsLoaded === assetsToLoad.length)
+          setTimeout(startIntroScene, 1500);
+      };
+    });
+  }
+
+  function startIntroScene() {
+    // Cacher le chargement
+    loadingLayer.classList.add("hidden");
+    // Afficher la scène de pluie
+    sceneIntroLayer.classList.remove("hidden");
+    // Audio pluie si tu en as un, sinon rien
+  }
+
+  // Clic sur "RENTRE VITE"
+  enterBtn.addEventListener("click", () => {
+    sceneIntroLayer.classList.add("hidden");
+    nextStep(); // Lance l'étape 1 (Porte)
+  });
+
+  // =========================================================
+  // 2. MOTEUR DE SCÉNARIO
   // =========================================================
 
   function nextStep() {
@@ -46,176 +97,183 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Étape : " + currentStep);
 
     switch (currentStep) {
-      case 1: // Intro GIF
-        playIntroGif();
+      // case 0: // Initialisation (ne rien faire)
+      //   break;
+      case 0: // Porte s'ouvre
+        playDoorGif();
         break;
-      case 2: // Yubaba parle (Bienvenue)
-        showYubabaIntro();
+      case 1: // Yubaba 1 : Présentation
+        showUi();
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter(
+          "Hey, toi ! Mon nom est Yubaba. Je suis la gérante de cet établissement thermal. Habituellement je ne fais pas ça mais...",
+          "typing-sound"
+        );
         break;
-      case 3: // NOUVEAU : Yubaba donne le stylo
+      case 2: // Yubaba 2 : Offre
+        typeWriter(
+          "Je t’offre l’opportunité unique de travailler pour moi. Quelle aubaine, pas vrai ? C’est un peu un cadeau de noël en avance.",
+          "typing-sound"
+        );
+        break;
+      case 3: // Le Pinceau (Item)
         offerPen();
         break;
-      case 4: // Le Contrat (Signature)
+      case 4: // Yubaba 3 : Signe ici
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter("Maintenant... SIGNE ICI !", "typing-sound");
+        break;
+      case 5: // Contrat (Action)
         showContract();
         break;
-      case 5: // Yubaba lit
-        yubabaReadsContract();
-        break;
-      case 6: // Vol du nom (GIF)
+      case 6: // Magie (GIFs)
         stealNameSequence();
         break;
-      case 7: // "Tu m'appartiens"
-        yubabaClaim();
+      case 7: // Yubaba 4 : Tu m'appartiens
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+        typeWriter(
+          "PARFAIT ! Tu m’appartiens à présent ! Et maintenant... AU TRAVAIL !",
+          "typing-sound"
+        );
         break;
-      case 8: // Zeniba arrive
-        zenibaAppears();
+      case 8: // Zeniba 1 : Bonjour
+        zenibaAppears(); // Gère la transition et le premier texte
         break;
-      case 9: // Yubaba revient
-        yubabaReturns();
+      case 9: // Zeniba 2 : Aide
+        typeWriter(
+          "Ne t’inquiète pas, je serai la pour t’aider à voir ce qu’elle cherche à te cacher.",
+          "brush-sound"
+        );
         break;
-      case 10: // Fin
-        textContent.innerHTML = "<i>Fin de l'introduction.</i>";
-        nextBtn.style.display = "none";
+      case 10: // Zeniba 3 : Le contrat
+        typeWriter(
+          "Par exemple, ce contrat que tu as signé. Il a pour but de te faire oublier ton nom.",
+          "brush-sound"
+        );
+        break;
+      case 11: // Zeniba 4 : Conseil
+        typeWriter(
+          "Mon conseil : N'oublie jamais qui tu es vraiment. Note ton vrai nom quelque part.",
+          "brush-sound"
+        );
+        break;
+      case 12: // Yubaba 5 : Fin journée
+        yubabaReturns(); // Gère le retour et le texte
+        break;
+      case 13: // GIF FIN
+        playEndScene();
         break;
     }
   }
 
   nextBtn.addEventListener("click", () => {
-    // Bloque le bouton si on doit faire une action spéciale
-    if (currentStep === 3) return; // Faut prendre le stylo
-    if (currentStep === 4) return; // Faut signer
-    if (currentStep === 6) return; // Séquence auto
+    // Bloque le bouton lors des actions spéciales
+    if (currentStep === 3) return; // Pinceau
+    if (currentStep === 5) return; // Signature
+    if (currentStep === 6) return; // Magie auto
+    if (currentStep === 13) return; // Fin
 
     nextStep();
   });
 
   // =========================================================
-  // 2. DÉTAIL DES ÉTAPES
+  // 3. FONCTIONS DÉTAILLÉES
   // =========================================================
 
-  function playIntroGif() {
+  function playDoorGif() {
+    introLayer.classList.remove("hidden");
     setTimeout(() => {
       introLayer.classList.add("hidden");
-      uiLayer.classList.remove("hidden");
-      nextStep();
-    }, 3000);
+      nextStep(); // Passe à Yubaba
+    }, 3000); // Durée du gif porte
   }
 
-  function showYubabaIntro() {
-    setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
-    typeWriter(
-      "Bienvenue aux Bains. Tu veux travailler ici ? Très bien... Mais il y a des règles.",
-      "typing-sound"
-    );
+  function showUi() {
+    uiLayer.classList.remove("hidden");
   }
 
-  // --- NOUVELLE FONCTION : OFFRIR LE STYLO ---
   function offerPen() {
-    typeWriter(
-      "Tiens, prends ce stylo. Tu en auras besoin pour signer ton engagement.",
-      "typing-sound"
-    );
+    uiLayer.classList.add("hidden"); // On cache le dialogue
+    itemLayer.classList.remove("hidden"); // On affiche le pinceau
 
-    // On affiche le stylo après un court délai ou direct
-    setTimeout(() => {
-      itemLayer.classList.remove("hidden");
-    }, 500);
-
-    // Interaction : Cliquer sur le stylo pour le prendre
-    itemLayer.onclick = () => {
-      itemLayer.classList.add("hidden"); // On cache le stylo
-      nextStep(); // On passe à la signature
+    // Clic sur "Récupérer le présent" (le bouton dans l'item-layer)
+    const btnRecup = itemLayer.querySelector(".item-hint"); // Assure toi que c'est bien la classe du bouton
+    btnRecup.onclick = () => {
+      itemLayer.classList.add("hidden");
+      uiLayer.classList.remove("hidden");
+      nextStep(); // Retour à Yubaba "Signe ici"
     };
   }
 
   function showContract() {
-    textContent.innerHTML = "<i>Signez le contrat avec le stylo...</i>";
-    nextBtn.style.display = "none";
-
-    // 1. On cache le personnage pour ne voir que le contrat
-    characterLayer.style.opacity = "0";
-
-    // 2. On affiche le contrat
+    uiLayer.classList.add("hidden"); // Cache dialogue
+    characterLayer.style.opacity = "0"; // Cache Yubaba
     contractContainer.classList.remove("hidden");
     initSignatureCanvas();
   }
 
-  function yubabaReadsContract() {
-    // 1. On range le contrat
-    contractContainer.classList.add("hidden");
-
-    // 2. On fait réapparaître Yubaba (qui lit)
-    characterImg.src = imgYubabaReading;
-    characterLayer.style.opacity = "1";
-
-    nextBtn.style.display = "block";
-    setSpeaker("YUBABA", "style-yubaba", null, "left"); // Réinitialise le tag si besoin
-    typeWriter("Hmm... Voyons voir ce nom...", "typing-sound");
-  }
-
   function stealNameSequence() {
-    uiLayer.classList.add("hidden");
-
+    contractContainer.classList.add("hidden"); // Cache contrat
     magicLayer.classList.remove("hidden");
     magicGif.src = gifMagicSteal;
-    characterImg.src = imgYubaba;
 
+    // Sequence Magie
     setTimeout(() => {
       magicGif.src = gifMagicEnd;
       setTimeout(() => {
         magicLayer.classList.add("hidden");
-        uiLayer.classList.remove("hidden");
-        nextStep();
+        uiLayer.classList.remove("hidden"); // Retour UI
+        characterImg.src = imgYubaba;
+        characterLayer.style.opacity = "1"; // Retour Yubaba
+        nextStep(); // Yubaba parle
       }, 2000);
     }, 3000);
   }
 
-  function yubabaClaim() {
-    setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
-    typeWriter(
-      "Ah ah ah ! C'est un nom trop luxueux pour toi. Désormais tu t'appelleras Sen. Tu m'appartiens !",
-      "typing-sound"
-    );
-  }
-
   function zenibaAppears() {
-    characterImg.style.opacity = 0;
+    characterImg.style.opacity = "0";
     setTimeout(() => {
-      setSpeaker("ZENIBA", "style-zeniba", imgZeniba, "right"); //imgZeniba ou imgYubaba si pas d'image
-      characterImg.style.opacity = 1;
+      setSpeaker("ZENIBA", "style-zeniba", imgZeniba, "right");
+      characterImg.style.opacity = "1";
       typeWriter(
-        "N'oublie jamais qui tu es vraiment. Note ton vrai nom quelque part avant qu'il ne s'efface.",
+        "Bonjour, mon nom est ZENIBA. Alors comme ça ma soeur t’a piégé(e) ?",
         "brush-sound"
       );
     }, 500);
   }
 
   function yubabaReturns() {
-    characterImg.style.opacity = 0;
+    characterImg.style.opacity = "0";
     setTimeout(() => {
       setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
-      characterImg.style.opacity = 1;
+      characterImg.style.opacity = "1";
       typeWriter(
-        "Allez, assez bavardé ! Au travail maintenant !",
+        "Tu as terminé ta journée, reviens demain j’ai des trucs à te donner...",
         "typing-sound"
       );
     }, 500);
   }
 
+  function playEndScene() {
+    uiLayer.classList.add("hidden");
+    endLayer.classList.remove("hidden");
+    // Boucle infinie, pas de nextStep
+  }
+
   // =========================================================
-  // 3. LOGIQUE SIGNATURE
+  // 4. SIGNATURE (CANVAS)
   // =========================================================
 
   function initSignatureCanvas() {
     signatureCanvas.width = signatureCanvas.offsetWidth;
     signatureCanvas.height = signatureCanvas.offsetHeight;
-    ctx.strokeStyle = "#2f2f2f"; // Encre noire/gris foncé
+    ctx.strokeStyle = "#2f2f2f";
     ctx.lineWidth = 3;
     ctx.lineCap = "round";
   }
 
   function startSigning(e) {
-    if (currentStep !== 4) return;
+    if (currentStep !== 5) return;
     isSigning = true;
     penCursor.style.display = "block";
     draw(e);
@@ -253,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let signaturePixels = 0;
   function checkSignatureCompletion() {
     if (signaturePixels > 50) {
-      // Seuil réduit pour test rapide
       signaturePixels = 0;
       setTimeout(() => {
         nextStep();
@@ -261,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Events
+  // Events Signature
   signatureCanvas.addEventListener("mousedown", startSigning);
   signatureCanvas.addEventListener("touchstart", startSigning);
   window.addEventListener("mouseup", stopSigning);
@@ -270,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
   signatureCanvas.addEventListener("touchmove", draw);
 
   // =========================================================
-  // 4. UTILITAIRES
+  // 5. UTILITAIRES
   // =========================================================
 
   function setSpeaker(name, styleClass, imgSrc, side) {
@@ -313,6 +370,6 @@ document.addEventListener("DOMContentLoaded", () => {
     type();
   }
 
-  currentStep = 0;
-  nextStep();
+  // LANCEMENT
+  preloadAssets(); // Commence par charger les images
 });
