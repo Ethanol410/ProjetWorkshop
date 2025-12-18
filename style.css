@@ -326,10 +326,10 @@ html {
 /* --- NOUVEAU : LAYER OBJET OFFERT --- */
 #item-layer {
     position: absolute;
-    top: 0;
+    top: 120px;
     left: 0;
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     z-index: 80;
     /* Au dessus de Yubaba */
     /* background: rgba(0, 0, 0, 0.7); */
@@ -356,7 +356,7 @@ html {
 
 .explicationObjet {
     color: #000;
-    font-size: 25px;
+    font-size: 20px;
     margin-top: 15px;
     padding: 10px;
     text-align: center;
@@ -380,14 +380,17 @@ html {
 .item-hint {
     color: #000000;
     /* font-family: 'Amatic SC', cursive; */
-    font-size: 24px;
+    font-size: 20px;
     margin-top: 20px;
     padding: 20px 15px;
     opacity: 1;
     background-color: #F7EEDF;
     animation: pulse 2s infinite;
-    border-radius: 9px;
-    border: 2px solid #000;
+    border-radius: 15px;
+    outline: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(209, 0, 0, 0.7);
+
 }
 
 @keyframes floatItem {
@@ -459,10 +462,15 @@ html {
 }
 
 .menu-layer-top .calendrier img {
-    width: 80px;
+    width: 60px;
     height: auto;
     cursor: pointer;
     transition: transform 0.3s;
+}
+
+.menu-layer-top .calendrier img:nth-last-child(3) {
+    margin-right: 20px;
+    scale: 2.2;
 }
 
 .menu-layer-top .calendrier img:hover {
