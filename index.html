@@ -74,7 +74,10 @@
             <p class="nomObjet">Pinceau</p>
             <img src="assets/utils/Pinceau2.png" id="item-img" alt="Pinceau">
             <p class="explicationObjet">Un vulgaire pinceau servant à écrire toute sorte de choses...</p>
-            <div class="item-hint">Récupérer le présent</div>
+            <div class="item-hint">
+                Récupérer le présent
+                <img class="cadeauIcon" src="./assets/utils/cadeauIcon.png" alt="icone cadeau">
+            </div>
         </div>
 
         <div id="magic-layer" class="hidden">
@@ -89,6 +92,12 @@
 
         <div id="end-layer" class="hidden">
             <img src="assets/gif/sceneFinJourne.gif" class="full-screen-bg" alt="Fin">
+            <div class="end-overlay">
+                <p class="end-text">Vous avez signé le contrat de Yubaba.<br>Votre aventure dans le monde des esprits
+                    ne fait que commencer...</p>
+                <p>Revenez demain pour la suite de votre aventure.</p>
+                <button id="end-btn" class="action-btn">CONTINUER L'AVENTURE</button>
+            </div>
         </div>
 
         <div id="ui-layer" class="hidden">

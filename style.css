@@ -11,12 +11,19 @@ html {
     font-family: sans-serif;
 }
 
+@font-face {
+    font-family: 'Franklin Gothic Medium';
+    src: url(./assets/fonts/ITC\ Franklin\ Gothic\ Std\ Medium\ Italic.otf);
+}
+
 #game-container {
     position: relative;
     width: 100%;
     height: 100%;
     background-color: #333;
 }
+
+
 
 /* --- COUCHE 1 & 2 : DÉCORS --- */
 #background-layer {
@@ -245,6 +252,7 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+
 }
 
 #intro-gif {
@@ -364,11 +372,12 @@ html {
     border-radius: 13px;
     width: 60%;
     outline: 3px solid #fff;
+    font-family: 'Franklin Gothic Medium', sans-serif;
 }
 
 .nomObjet {
     color: #fff;
-    font-family: 'Amatic SC', cursive;
+    font-family: 'Courier Prime', monospace;
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 10px;
@@ -379,7 +388,7 @@ html {
 
 .item-hint {
     color: #000000;
-    /* font-family: 'Amatic SC', cursive; */
+    font-family: 'Franklin Gothic Medium', sans-serif;
     font-size: 20px;
     margin-top: 20px;
     padding: 20px 15px;
@@ -391,6 +400,13 @@ html {
     cursor: pointer;
     box-shadow: 0 0 10px rgba(209, 0, 0, 0.7);
 
+}
+
+.cadeauIcon {
+    width: 30px;
+    height: auto;
+    margin-left: 10px;
+    vertical-align: middle;
 }
 
 @keyframes floatItem {
@@ -590,6 +606,19 @@ html {
     background: black;
 }
 
+.end-overlay {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+}
+
 .full-screen-bg {
     width: 100%;
     height: 100%;
@@ -611,8 +640,8 @@ html {
 }
 
 .intro-text {
-    font-family: 'Amatic SC', cursive;
-    font-size: 24px;
+    font-family: 'Franklin Gothic Medium', sans-serif;
+    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -621,7 +650,7 @@ html {
     color: white;
     border: none;
     padding: 10px 20px;
-    font-family: 'Courier Prime', monospace;
+    font-family: 'Franklin Gothic Medium', sans-serif;
     font-size: 18px;
     border-radius: 5px;
     cursor: pointer;
