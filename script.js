@@ -55,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let day4Step = -1;
   let cleaningProgress = 0;
   let cleaningActive = false;
+  let lastCleaningX = 0;
+  let lastCleaningY = 0;
 
   // =========================================================
   // 1. PRELOADER (CHARGEMENT)
@@ -489,6 +491,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startScrub(e) {
     cleaningActive = true;
+    lastCleaningX = e.clientX;
+    lastCleaningY = e.clientY;
     moveCursor(e);
     const audio = document.getElementById("brush-sound");
     if (audio) {
@@ -514,10 +518,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleScrub(e) {
     if (!cleaningActive) return;
+
+    // Calculer la distance parcourue depuis la dernière position
+    const deltaX = e.clientX - lastCleaningX;
+    const deltaY = e.clientY - lastCleaningY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Ne compter que si on bouge vraiment (distance > 2 pixels)
+    if (distance > 2) {
+      cleaningProgress += Math.floor(distance / 3); // Chaque 3 pixels de mouvement = 1 point
+      updateCleaningBar(cleaningProgress);
+
+      // Mettre à jour la dernière position
+      lastCleaningX = e.clientX;
+      lastCleaningY = e.clientY;
+
+      if (cleaningProgress >= 120) revealCleanDish();
+    }
+
     moveCursor(e);
-    cleaningProgress++;
-    updateCleaningBar(cleaningProgress);
-    if (cleaningProgress > 120) revealCleanDish();
   }
 
   function revealCleanDish() {
