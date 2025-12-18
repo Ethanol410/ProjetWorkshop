@@ -91,14 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. MOTEUR DE SCÉNARIO
   // =========================================================
 
+  // DANS script.js : Remplacez la fonction nextStep par celle-ci
+
   function nextStep() {
     if (isTyping) return;
     currentStep++;
     console.log("Étape : " + currentStep);
 
     switch (currentStep) {
-      // case 0: // Initialisation (ne rien faire)
-      //   break;
       case 0: // Porte s'ouvre
         playDoorGif();
         break;
@@ -123,55 +123,64 @@ document.addEventListener("DOMContentLoaded", () => {
         setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
         typeWriter("Maintenant... SIGNE ICI !", "typing-sound");
         break;
-      case 5: // Contrat (Action)
+      case 5: // Contrat (Action de signer)
         showContract();
         break;
-      case 6: // Magie (GIFs)
-        stealNameSequence();
+
+      // --- NOUVELLE SÉQUENCE ---
+      case 6: // Yubaba lit le contrat
+        yubabaReads();
         break;
-      case 7: // Yubaba 4 : Tu m'appartiens
-        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left");
+      case 7: // Yubaba valide ("Parfait !") AVANT la magie
+        setSpeaker("YUBABA", "style-yubaba", imgYubaba, "left"); // On remet l'image normale
         typeWriter(
           "PARFAIT ! Tu m’appartiens à présent ! Et maintenant... AU TRAVAIL !",
           "typing-sound"
         );
         break;
-      case 8: // Zeniba 1 : Bonjour
-        zenibaAppears(); // Gère la transition et le premier texte
+      case 8: // La Magie (GIFs) APRÈS le dialogue
+        stealNameSequence();
         break;
-      case 9: // Zeniba 2 : Aide
+      // --------------------------
+
+      case 9: // Zeniba 1 : Bonjour (Décalé de 8 à 9)
+        zenibaAppears();
+        break;
+      case 10: // Zeniba 2 : Aide
         typeWriter(
           "Ne t’inquiète pas, je serai la pour t’aider à voir ce qu’elle cherche à te cacher.",
           "brush-sound"
         );
         break;
-      case 10: // Zeniba 3 : Le contrat
+      case 11: // Zeniba 3 : Le contrat
         typeWriter(
           "Par exemple, ce contrat que tu as signé. Il a pour but de te faire oublier ton nom.",
           "brush-sound"
         );
         break;
-      case 11: // Zeniba 4 : Conseil
+      case 12: // Zeniba 4 : Conseil
         typeWriter(
           "Mon conseil : N'oublie jamais qui tu es vraiment. Note ton vrai nom quelque part.",
           "brush-sound"
         );
         break;
-      case 12: // Yubaba 5 : Fin journée
-        yubabaReturns(); // Gère le retour et le texte
+      case 13: // Yubaba 5 : Fin journée
+        yubabaReturns();
         break;
-      case 13: // GIF FIN
+      case 14: // GIF FIN
         playEndScene();
         break;
     }
   }
 
+  // Modifiez cette partie vers la ligne 130 de script.js
+
   nextBtn.addEventListener("click", () => {
     // Bloque le bouton lors des actions spéciales
     if (currentStep === 3) return; // Pinceau
     if (currentStep === 5) return; // Signature
-    if (currentStep === 6) return; // Magie auto
-    if (currentStep === 13) return; // Fin
+    if (currentStep === 8) return; // Magie auto (C'était 6 avant, c'est 8 maintenant)
+    if (currentStep === 14) return; // Fin
 
     nextStep();
   });
@@ -252,6 +261,19 @@ document.addEventListener("DOMContentLoaded", () => {
         "typing-sound"
       );
     }, 500);
+  }
+
+  function yubabaReads() {
+    // 1. Cacher le contrat signé
+    contractContainer.classList.add("hidden");
+
+    // 2. Réafficher l'interface (UI + Personnage)
+    uiLayer.classList.remove("hidden");
+    characterLayer.style.opacity = "1"; // On fait réapparaître Yubaba
+
+    // 3. Mettre l'image de lecture et le texte
+    setSpeaker("YUBABA", "style-yubaba", imgYubabaReading, "left");
+    typeWriter("Hmm... Voyons voir si ce nom est correct...", "typing-sound");
   }
 
   function playEndScene() {
