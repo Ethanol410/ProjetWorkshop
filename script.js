@@ -203,6 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function offerPen() {
     uiLayer.classList.add("hidden"); // On cache le dialogue
+    characterImg.style.opacity = "0"; // On cache Yubaba
     itemLayer.classList.remove("hidden"); // On affiche le pinceau
 
     // Clic sur "Récupérer le présent" (le bouton dans l'item-layer)
@@ -210,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnRecup.onclick = () => {
       itemLayer.classList.add("hidden");
       uiLayer.classList.remove("hidden");
+      characterImg.style.opacity = "1";
       nextStep(); // Retour à Yubaba "Signe ici"
     };
   }
