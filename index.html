@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jour 1 : Le Contrat</title>
+    <link rel="stylesheet" href="./style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Amatic+SC:wght@700&family=Courier+Prime:wght@700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <audio id="typing-sound" src="assets/sounds/typing.mp3" loop></audio>
+    <audio id="brush-sound" src="assets/sounds/brush.mp3" loop></audio>
+    <audio id="magic-sound" src="assets/sounds/magic.mp3"></audio>
+
+    <div id="game-container">
+
+        <!-- LAYER INTRO -->
+        <div id="intro-layer">
+            <img src="assets/gif/ouverturePorte.gif" id="intro-gif" alt="Portes">
+        </div>
+
+        <!-- LAYER FOND -->
+        <div id="background-layer" style="background-image: url('assets/background/bureauYubaba.jpg');"></div>
+
+        <!-- LAYER PERSONNAGE -->
+        <div id="character-layer">
+            <img src="assets/utils/yubaba.png" id="character-img" style="transition: opacity 0.5s;">
+        </div>
+
+        <!-- LAYER MENU EN HAUT  -->
+        <div id="" class="menu-layer-top">
+            <div class="bois">
+                <img src="assets/background/FondEnBois.png" alt="Bois">
+            </div>
+            <div class="calendrier">
+                <img src="/assets/utils/LogoChihiro.png" alt="Logo Chihiro">
+                <p>Jour</p>
+                <img src="./assets/utils/Jour1.png" alt="Jour 1">
+            </div>
+        </div>
+
+        <!-- LAYER MENU EN BAS  -->
+        <div id="" class="menu-layer-bottom">
+            <div class="bois">
+                <img src="assets/background/FondEnBois.png" alt="Bois">
+            </div>
+            <div class="calendrier">
+                <img src="./assets/utils/jour1flat.png" alt="Jour 1">
+                <img src="./assets/utils/jour2flat.png" alt="jour 2">
+                <img src="./assets/utils/jour3flat.png" alt="jour 3">
+                <img src="./assets/utils/jour4flat.png" alt="jour 4">
+            </div>
+        </div>
+
+        <!-- LAYER OBJET (NOUVEAU) -->
+        <div id="item-layer" class="hidden">
+            <p class="nomObjet">Pinceau</p>
+            <img src="assets/utils/Pinceau2.png" id="item-img" alt="Stylo Offert">
+            <p class="explicationObjet">Un vulgaire pinceau servant à écrire toute sorte de choses...</p>
+            <button class="item-hint">Récupérer le présent</button>
+        </div>
+
+        <!-- LAYER MAGIE -->
+        <div id="magic-layer" class="hidden">
+            <img src="" id="magic-gif" alt="Magie">
+        </div>
+
+        <!-- LAYER CONTRAT -->
+        <div id="contract-container" class="hidden">
+            <img src="assets/utils/contratEcrit.png" id="contract-img" alt="Contrat">
+            <canvas id="signature-canvas"></canvas>
+            <img src="assets/utils/Pinceau2.png" id="pen-cursor" alt="Stylo">
+        </div>
+
+        <!-- LAYER UI -->
+        <div id="ui-layer" class="hidden">
+            <div class="dialogue-box style-yubaba" id="dialogue-box">
+                <div class="name-tag" id="name-tag">YUBABA</div>
+                <p class="text-content" id="text-content"></p>
+                <div class="next-indicator" id="next-btn">▼</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
