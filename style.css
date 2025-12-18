@@ -326,10 +326,10 @@ html {
 /* --- NOUVEAU : LAYER OBJET OFFERT --- */
 #item-layer {
     position: absolute;
-    top: 120px;
+    top: 0px;
     left: 0;
     width: 100%;
-    /* height: 100%; */
+    height: 100%;
     z-index: 80;
     /* Au dessus de Yubaba */
     /* background: rgba(0, 0, 0, 0.7); */
