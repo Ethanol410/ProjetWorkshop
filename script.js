@@ -669,10 +669,10 @@ document.addEventListener("DOMContentLoaded", () => {
         characterImg.style.opacity = "0";
         setTimeout(() => {
           characterImg.src = imgKamaji;
-          characterLayer.classList.add("position-right");
-          characterLayer.classList.remove("position-left");
+          characterLayer.classList.add("position-center");
+          characterLayer.classList.remove("position-left", "position-right");
           characterImg.style.opacity = "1";
-          setSpeaker("KAMAJI", "style-zeniba", imgKamaji, "right");
+          setSpeaker("KAMAJI", "style-kamaji", imgKamaji, "center");
           typeWriter(
             "Personne ne mérite d'être traité de cette manière. Tenez ! Et partez vite !",
             "typing-sound"
@@ -998,10 +998,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (imgSrc) characterImg.src = imgSrc;
 
     const charLayer = document.getElementById("character-layer");
-    charLayer.classList.remove("position-left", "position-right");
+    charLayer.classList.remove(
+      "position-left",
+      "position-right",
+      "position-center"
+    );
 
     if (side === "left") charLayer.classList.add("position-left");
     else if (side === "right") charLayer.classList.add("position-right");
+    else if (side === "center") charLayer.classList.add("position-center");
 
     const nameTagElement = document.getElementById("name-tag");
     if (side === "left") nameTagElement.classList.add("name-tag-right");
