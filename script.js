@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const enterBtn = document.getElementById("enter-btn");
   const endLayer = document.getElementById("end-layer");
   const endBtn = document.getElementById("end-btn");
+  const endLayerImg = endLayer.querySelector(".full-screen-bg");
+  const endLayerText = endLayer.querySelector(".end-text");
 
   const backgroundLayer = document.getElementById("background-layer");
 
@@ -364,8 +366,20 @@ document.addEventListener("DOMContentLoaded", () => {
     typeWriter("Hmm... Voyons voir si ce nom est correct...", "typing-sound");
   }
 
-  function playEndScene() {
+  function playEndScene(day = 1) {
     uiLayer.classList.add("hidden");
+
+    // Changer le gif et le texte en fonction du jour
+    if (day === 4) {
+      endLayerImg.src = "assets/gif/sceneCuisine.gif";
+      endLayerText.innerHTML =
+        "Vous avez brillamment accompli votre tâche de nettoyage.<br>Zeniba serait fière de vous...";
+    } else {
+      endLayerImg.src = "assets/gif/sceneFinJourne.gif";
+      endLayerText.innerHTML =
+        "Vous avez signé le contrat de Yubaba.<br>Votre aventure dans le monde des esprits ne fait que commencer...";
+    }
+
     endLayer.classList.remove("hidden");
     // Boucle infinie, pas de nextStep
   }
@@ -497,7 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
         typeWriter(
           "Tu as terminé ta journée, reviens demain j’ai des trucs à te donner...",
           "typing-sound",
-          () => setTimeout(playEndScene, 400)
+          () => setTimeout(() => playEndScene(4), 400)
         );
         break;
       default:
@@ -715,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showItem(
       "Ticket de Train",
       "Un précieux ticket pour voyager vers la liberté.",
-      "assets/utils/ticketDeTrain2.png",
+      "assets/utils/ticketDeTrain.png",
       () => nextStepDay24()
     );
   }
@@ -765,7 +779,6 @@ document.addEventListener("DOMContentLoaded", () => {
     hint.style.cssText = `
       color: #fff;
       font-family: 'Courier Prime', monospace;
-      font-size: 24px;
       margin-top: 20px;
       text-shadow: 2px 2px 4px #000;
       animation: pulse 2s infinite;

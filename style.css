@@ -151,7 +151,7 @@ html {
 
 .dialogue-box {
     width: 100%;
-    max-width: 350px;
+    max-width: 330px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 10px;
     border: 2px solid #000;
@@ -536,7 +536,7 @@ html {
 
 .menu-layer-bottom .calendrier {
     position: absolute;
-    top: 25px;
+    top: 15px;
     width: 100%;
     display: flex;
     justify-content: end;
