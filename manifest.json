@@ -3,8 +3,8 @@
   "short_name": "Chihiro",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#95213",
+  "theme_color": "#95213",
   "icons": [
     {
       "src": "./assets/utils/LogoChihiro.png",

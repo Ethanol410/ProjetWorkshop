@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- ASSETS CONFIG ---
   const imgYubaba = "assets/utils/yubaba.png";
   const imgYubabaReading = "assets/utils/yubabaReading.png";
+  const imgYubabaAngry = "assets/utils/yubabaAngry.png";
   const imgZeniba = "assets/utils/yubaba.png";
   const imgKamaji = "assets/utils/kamaji.png"; // À remplacer si tu as l'image de Kamaji
 
@@ -78,12 +79,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const assetsToLoad = [
     "assets/gif/sceneIntro.gif",
     "assets/gif/ouverturePorte.gif",
+    "assets/gif/debutContrat.gif",
+    "assets/gif/finContrat.gif",
     "assets/background/bureauYubaba.jpg",
+    "assets/background/fondHallMenage.png",
     "assets/utils/",
     gifMagicSteal,
     gifMagicEnd,
     imgYubaba,
+    imgYubabaReading,
+    imgYubabaAngry,
     imgZeniba,
+    imgKamaji,
     "assets/utils/Chiffon2.png",
     "assets/utils/AssietteSale.png",
     "assets/utils/AssiettePropre.png",
@@ -119,7 +126,12 @@ document.addEventListener("DOMContentLoaded", () => {
     sceneIntroLayer.classList.remove("hidden");
     // Initialiser le calendrier pour le jour 1
     setDayIndicator(1);
-    // Audio pluie si tu en as un, sinon rien
+    // Audio de fond
+    const bgMusic = document.getElementById("soundDesignHome");
+    if (bgMusic) {
+      bgMusic.volume = 0.5; // Volume à 50%
+      bgMusic.play().catch((e) => console.log("Autoplay bloqué:", e));
+    }
   }
 
   // Clic sur "RENTRE VITE"
@@ -373,11 +385,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (day === 4) {
       endLayerImg.src = "assets/gif/sceneCuisine.gif";
       endLayerText.innerHTML =
-        "Vous avez brillamment accompli votre tâche de nettoyage.<br>Zeniba serait fière de vous...";
+        "Tu as brillamment accompli ta tâche de nettoyage.<br>Zeniba serait fière de toi...";
     } else {
       endLayerImg.src = "assets/gif/sceneFinJourne.gif";
       endLayerText.innerHTML =
-        "Vous avez signé le contrat de Yubaba.<br>Votre aventure dans le monde des esprits ne fait que commencer...";
+        "Tu as signé le contrat de Yubaba.<br>Ton aventure dans le monde des esprits ne fait que commencer...";
     }
 
     endLayer.classList.remove("hidden");
@@ -511,7 +523,7 @@ document.addEventListener("DOMContentLoaded", () => {
         typeWriter(
           "Tu as terminé ta journée, reviens demain j’ai des trucs à te donner...",
           "typing-sound",
-          () => setTimeout(() => playEndScene(4), 400)
+          () => setTimeout(() => playEndScene(4), 1500)
         );
         break;
       default:
@@ -876,8 +888,7 @@ document.addEventListener("DOMContentLoaded", () => {
         padding: 40px;
         border-radius: 15px;
       `;
-      endMessage.innerHTML =
-        "Félicitations !<br>Vous avez terminé votre aventure.";
+      endMessage.innerHTML = "Félicitations !<br>Tu as terminé ton aventure.";
       finalSceneLayer.appendChild(endMessage);
     }, 3000);
   }
@@ -1004,7 +1015,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const audio = document.getElementById(soundId);
     if (audio) {
       audio.currentTime = 0;
-      audio.volume = 0.5;
+      audio.volume = 0.3;
       audio.play().catch(() => {});
     }
 

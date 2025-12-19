@@ -164,12 +164,14 @@ html {
 
 /* Style YUBABA (Défaut) */
 .style-yubaba .name-tag {
-    background-color: #8B0000;
+    background-color: #2B0000;
     color: white;
+    font-family: 'Courier Prime', monospace !important;
+    font-weight: 400 !important;
 }
 
 .style-yubaba .text-content {
-    font-family: 'Courier Prime', monospace;
+    font-family: 'Courier Prime', monospace !important;
     font-weight: 700;
     color: #2b0000;
 }
@@ -551,7 +553,7 @@ html {
 
 .menu-layer-bottom .calendrier.start-layout {
     justify-content: start;
-    gap: 8px;
+    /* gap: 8px; */
 }
 
 .menu-layer-bottom .day {
