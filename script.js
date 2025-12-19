@@ -576,16 +576,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaY = e.clientY - lastCleaningY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Ne compter que si on bouge vraiment (distance > 2 pixels)
-    if (distance > 2) {
-      cleaningProgress += Math.floor(distance / 3); // Chaque 3 pixels de mouvement = 1 point
+    // Ne compter que si on bouge vraiment (distance > 5 pixels)
+    if (distance > 5) {
+      cleaningProgress += Math.floor(distance / 5); // Chaque 5 pixels de mouvement = 1 point
       updateCleaningBar(cleaningProgress);
 
       // Mettre à jour la dernière position
       lastCleaningX = e.clientX;
       lastCleaningY = e.clientY;
 
-      if (cleaningProgress >= 120) revealCleanDish();
+      if (cleaningProgress >= 250) revealCleanDish();
     }
 
     moveCursor(e);
@@ -598,13 +598,13 @@ document.addEventListener("DOMContentLoaded", () => {
     cleaningMessage.classList.remove("hidden");
     finishBtn.classList.remove("hidden");
     if (cleaningHint) cleaningHint.classList.add("hidden");
-    updateCleaningBar(120);
+    updateCleaningBar(250);
     stopScrub();
   }
 
   function updateCleaningBar(value) {
     if (!cleaningProgressBar) return;
-    const target = 120;
+    const target = 250;
     const pct = Math.min(value / target, 1) * 100;
     cleaningProgressBar.style.width = `${pct}%`;
   }
