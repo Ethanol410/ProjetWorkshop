@@ -1,6 +1,6 @@
 # 🎄 Calendrier de l'Avent Chihiro
 
-Une application web interactive inspirée du film culte du **Studio Ghibli** : *Le Voyage de Chihiro* (千と千尋の神隠し). Ce calendrier de l'Avent propose une expérience narrative immersive où le joueur incarne un personnage qui se retrouve piégé dans l'établissement thermal de Yubaba.
+Une application web interactive inspirée du film culte du **Studio Ghibli** : _Le Voyage de Chihiro_ (千と千尋の神隠し). Ce calendrier de l'Avent propose une expérience narrative immersive où le joueur incarne un personnage qui se retrouve piégé dans l'établissement thermal de Yubaba.
 
 ![Logo Chihiro](assets/utils/LogoChihiro.png)
 
@@ -19,18 +19,21 @@ Ce projet est un **calendrier de l'Avent interactif** qui combine narration, min
 Le calendrier propose plusieurs journées interactives avec des mécaniques de jeu variées :
 
 #### **Jour 1 : Le Contrat**
+
 - Découverte de l'établissement et rencontre avec Yubaba
 - Signature interactive d'un contrat magique sur canvas
 - Introduction à l'histoire et vol du nom du joueur
 - Apparition de Zeniba qui offre son aide
 
 #### **Jour 4 : Le Nettoyage**
+
 - Mini-jeu de nettoyage d'assiette interactive
 - Système de frottage avec détection de mouvement
 - Barre de progression visuelle
 - Récompense à la fin de la tâche
 
 #### **Jour 24 : La Libération** (Finale)
+
 - Confrontation finale avec Yubaba
 - Aide de Kamaji qui donne un ticket de train
 - Mini-jeu de destruction du contrat par clics successifs
@@ -56,6 +59,7 @@ Le calendrier propose plusieurs journées interactives avec des mécaniques de j
 ### 📱 Progressive Web App (PWA)
 
 L'application est configurée comme une PWA avec :
+
 - Fichier `manifest.json` pour l'installation sur mobile
 - Support des métadonnées Apple pour iOS
 - Mode standalone pour une expérience app-like
@@ -64,6 +68,7 @@ L'application est configurée comme une PWA avec :
 ### 🎯 Page de vote interactive
 
 Un mini-jeu bonus (`vote.html`) permet de :
+
 - Cliquer sur les Noiraudes (suies) pour donner des étoiles
 - Système de score cumulatif
 - Animations de particules étoilées
@@ -146,12 +151,14 @@ Le jeu utilise un moteur de dialogue sophistiqué avec :
 ## 🚀 Installation et lancement
 
 ### Prérequis
+
 - Un navigateur web moderne (Chrome, Firefox, Safari, Edge)
 - Aucune dépendance externe à installer
 
 ### Lancement local
 
 1. Cloner ou télécharger le projet :
+
 ```bash
 git clone https://github.com/Ethanol410/ProjetWorkshop.git
 cd ProjetWorkshop
@@ -160,6 +167,7 @@ cd ProjetWorkshop
 2. Ouvrir avec un serveur local (recommandé pour éviter les problèmes CORS) :
 
 **Option 1 : Python**
+
 ```bash
 # Python 3
 python -m http.server 8000
@@ -169,15 +177,18 @@ python -m SimpleHTTPServer 8000
 ```
 
 **Option 2 : Node.js (avec npx)**
+
 ```bash
 npx http-server
 ```
 
 **Option 3 : Extension VS Code**
+
 - Utiliser l'extension "Live Server"
 - Clic droit sur `index.html` → "Open with Live Server"
 
 3. Ouvrir dans le navigateur :
+
 ```
 http://localhost:8000
 ```
@@ -185,6 +196,7 @@ http://localhost:8000
 ### Installation comme PWA
 
 Sur mobile ou ordinateur :
+
 1. Ouvrir l'application dans le navigateur
 2. Suivre les instructions d'installation (bannière ou menu)
 3. L'icône apparaîtra sur l'écran d'accueil
@@ -192,33 +204,39 @@ Sur mobile ou ordinateur :
 ## 📱 Compatibilité
 
 ### Navigateurs supportés
+
 - ✅ Chrome/Edge (dernières versions)
 - ✅ Firefox (dernières versions)
 - ✅ Safari (iOS 11.3+, macOS 10.13+)
 - ✅ Opera
 
 ### Appareils
+
 - 💻 Desktop (toutes résolutions)
 - 📱 Mobile (iOS et Android)
 - 📲 Tablettes
 
 ### Contrôles
+
 - 🖱️ **Souris** : Clic pour interactions, glisser pour signature/nettoyage
 - 👆 **Tactile** : Tap pour interactions, glisser pour signature/nettoyage
 
 ## 🎮 Guide de jeu
 
 ### Navigation
+
 - Cliquer sur les dialogues ou la flèche pour avancer
 - Les jours se débloquent progressivement
 - Le jour actif est mis en évidence dans le calendrier en bas
 
 ### Conseils
+
 - **Jour 1** : Dessinez sur le contrat pour signer (pas besoin d'être précis)
 - **Jour 4** : Frottez l'assiette avec des mouvements amples pour remplir la barre
 - **Jour 24** : Cliquez rapidement sur le contrat pour le détruire
 
 ### Easter eggs
+
 - Explorez les différentes réactions des personnages
 - Écoutez attentivement les conseils de Zeniba
 - Observez les détails des animations GIF
@@ -226,17 +244,20 @@ Sur mobile ou ordinateur :
 ## 🎨 Assets et crédits
 
 ### Inspiration
-- **Film** : *Le Voyage de Chihiro* (2001) - Studio Ghibli / Hayao Miyazaki
+
+- **Film** : _Le Voyage de Chihiro_ (2001) - Studio Ghibli / Hayao Miyazaki
 - **Univers** : Établissement thermal de Yubaba
 - **Personnages** : Yubaba, Zeniba, Kamaji, Sen/Chihiro, Noiraudes
 
 ### Polices utilisées
+
 - **Abril Fatface** : Titres
 - **Amatic SC** : Textes décoratifs
 - **Courier Prime** : Dialogues
 - **Indie Flower** : Éléments manuscrits
 
 ### Structure des assets
+
 ```
 assets/
 ├── background/        # Fonds : bureau, hall, Kamaji, train
@@ -248,6 +269,7 @@ assets/
 ## 🛠️ Architecture technique
 
 ### Système de couches (Layers)
+
 L'interface utilise un système de z-index pour superposer les éléments :
 
 ```
@@ -262,6 +284,7 @@ z-index: 200 → Final scene (écran de fin)
 ```
 
 ### Machine à états
+
 Le jeu utilise un système de steps pour gérer la progression :
 
 - **currentStep** : Étape actuelle du Jour 1 (0-14)
@@ -270,6 +293,7 @@ Le jeu utilise un système de steps pour gérer la progression :
 - **isTyping** : Empêche les clics pendant l'animation de texte
 
 ### Gestion d'événements
+
 - **Pointer Events** : Support unifié souris/tactile
 - **Touch Events** : Gestion spécifique mobile avec `passive: false`
 - **Event delegation** : Optimisation des listeners
@@ -300,6 +324,7 @@ Ce projet est un fan project éducatif et non commercial, inspiré de l'univers 
 ## 👨‍💻 Auteur
 
 **Projet Workshop** - Développé par Ethanol410
+
 - GitHub : [@Ethanol410](https://github.com/Ethanol410)
 
 ## 🙏 Remerciements
@@ -311,6 +336,6 @@ Ce projet est un fan project éducatif et non commercial, inspiré de l'univers 
 
 ---
 
-*"N'oublie jamais qui tu es vraiment."* - Zeniba
+_"N'oublie jamais qui tu es vraiment."_ - Zeniba
 
 🎭 **Bon voyage dans le monde des esprits !** 🏯
